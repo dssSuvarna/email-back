@@ -11,9 +11,9 @@ spring:
   application:
     name: AUTH-SERVICE
   datasource:
-    url: jdbc:mysql://monorail.proxy.rlwy.net:11355/railway
+    url: jdbc:mysql://viaduct.proxy.rlwy.net:41283/railway
     username: root
-    password: JQdrGtpXesLHDwcweBKlYdfQwULfOCfs
+    password: wfZatVjxhRwYGeVKiSxWvVemdrnmxsmG
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
