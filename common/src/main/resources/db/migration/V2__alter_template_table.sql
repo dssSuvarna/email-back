@@ -1,0 +1,2 @@
+ALTER TABLE template
+MODIFY COLUMN content TEXT(1000000);

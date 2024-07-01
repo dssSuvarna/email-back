@@ -1,0 +1,45 @@
+server:
+  servlet:
+    context-path: /auth
+  port: ${PORT:9005}
+
+logging:
+  level:
+    org.springframework.web.cors: DEBUG
+
+spring:
+  application:
+    name: AUTH-SERVICE
+  datasource:
+    url: jdbc:mysql://monorail.proxy.rlwy.net:11355/railway
+    username: root
+    password: JQdrGtpXesLHDwcweBKlYdfQwULfOCfs
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect # Use the appropriate MySQL dialect here
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:5MB}
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone : http://eureka-server-registry:8761/eureka/
+
+
+auth:
+  secret_key: ${SECRET_KEY:5367566B59703373367639792F423F4528482B4D6251655468576D5A71347437}
+
+api-config:
+  openApis:
+    - /auth/login
+    - /auth/generate-otp
+    - /auth/verify-otp

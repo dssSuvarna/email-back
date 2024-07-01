@@ -1,0 +1,49 @@
+server:
+  servlet:
+    context-path: /core
+  port: ${PORT:9010}
+
+spring:
+  application:
+    name: CORE-SERVICE
+  datasource:
+    url: jdbc:mysql://monorail.proxy.rlwy.net:11355/railway
+    username: root
+    password: JQdrGtpXesLHDwcweBKlYdfQwULfOCfs
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect # Use the appropriate MySQL dialect here
+    flyway:
+      baseline-on-migrate: false
+  servlet:
+    multipart:
+      max-file-size: ${MAX_FILE_SIZE:5MB}
+
+api-config:
+  openApis:
+eureka:
+  client:
+    service-url:
+      defaultZone : http://eureka-server-registry:8761/eureka/
+
+
+
+org:
+  jobrunr:
+    background-job-server:
+      enabled: true
+    dashboard:
+      enabled: true
+    storageProvider: org.jobrunr.storage.sql.mysql.MySqlStorageProvider
+    db:
+      url: jdbc:mysql://localhost:3306/jobrunr_database
+      username: root
+      password: root
+

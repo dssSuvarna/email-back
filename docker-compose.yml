@@ -1,0 +1,93 @@
+version: '3'
+services:
+  eureka-server-registry:
+    image: "${DOCKER_HUB_USERNAME}/eureka-server-registry"
+    container_name: eureka-server-registry
+    networks:
+      - email-marketing
+    ports:
+      - "8761:8761"
+  email-marketing-gateway:
+    image: "${DOCKER_HUB_USERNAME}/email-marketing-gateway"
+    container_name: email-marketing-gateway
+    networks:
+      - email-marketing
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-server-registry
+    environment:
+      EUREKA_CLIENT_URL: http://eureka-server-registry:8761/eureka/
+  core-service:
+    image: "${DOCKER_HUB_USERNAME}/core-service"
+    container_name: core-service
+    depends_on:
+      - email-marketing-gateway
+      - email-marketing-db
+    environment:
+      MYSQL_HOST: $MYSQL_HOST
+      MYSQL_PORT: $MYSQL_PORT
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MAX_FILE_SIZE: $MAX_FILE_SIZE
+      EUREKA_CLIENT_URL: http://eureka-server-registry:8761/eureka/
+    networks:
+      - email-marketing
+    ports:
+      - "9010:9010"
+
+  auth-service:
+    image: "${DOCKER_HUB_USERNAME}/auth-service"
+    container_name: auth-service
+    depends_on:
+      - core-service
+    environment:
+      MYSQL_HOST: $MYSQL_HOST
+      MYSQL_PORT: $MYSQL_PORT
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MAX_FILE_SIZE: $MAX_FILE_SIZE
+      SECRET_KEY: $SECRET_KEY
+      EUREKA_CLIENT_URL: http://eureka-server-registry:8761/eureka/
+    ports:
+      - "9005:9005"
+    networks:
+      - email-marketing
+
+  email-marketing-front:
+    image: "${DOCKER_HUB_USERNAME}/email-marketing-front"
+    container_name: email-marketing-front
+    ports:
+      - "80:3000"
+    networks:
+      - email-marketing
+      
+  email-marketing-db:
+    image: mysql:8.3.0
+    container_name: email-marketing-db
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+    ports:
+      - "3306:3306"
+    volumes:
+      - "/home/akshay/Desktop/email-marketing-tool/db-data:/var/lib/mysql"
+    networks:
+      - email-marketing
+
+  ngrok:
+    image: wernight/ngrok
+    container_name: ngrok
+    environment:
+      NGROK_AUTHTOKEN: "2gHGG1SjV1Cw05F9SZvXT6JdmlD_5EbJoHE9v6H6ALgaoVsBt"
+    ports:
+      - "4040:4040"
+    command: ngrok http email-marketing-gateway:8085
+    networks:
+      - email-marketing
+      
+networks:
+  email-marketing:
+    driver: bridge
